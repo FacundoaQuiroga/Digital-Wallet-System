@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sistema-billetera-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sistema_billetera
+      POSTGRES_USER: billetera_user
+      POSTGRES_PASSWORD: billetera_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
