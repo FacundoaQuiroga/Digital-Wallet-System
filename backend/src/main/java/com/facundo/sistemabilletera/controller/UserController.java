@@ -4,6 +4,7 @@ import com.facundo.sistemabilletera.model.AppUser;
 import com.facundo.sistemabilletera.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import com.facundo.sistemabilletera.dto.UserResponse;
 
 
 @RestController
@@ -18,11 +19,17 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AppUser createUser(@RequestBody CreateUserRequest request) {
-        return userService.createUser(
+    public UserResponse createUser(@RequestBody CreateUserRequest request) {
+        AppUser user = userService.createUser(
                 request.fullName(),
                 request.email(),
                 request.password()
+        );
+
+        return new UserResponse(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail()
         );
     }
 
