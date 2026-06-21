@@ -13,7 +13,14 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/health", "/api/users", "/api/wallets/**").permitAll()
+                        .requestMatchers(
+                    "/api/health",
+                                "/api/users",
+                                "/api/wallets/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
