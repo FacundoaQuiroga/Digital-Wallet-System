@@ -6,9 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import com.facundo.sistemabilletera.model.WalletTransaction;
 import java.util.List;
 import com.facundo.sistemabilletera.dto.WalletResponse;
+import com.facundo.sistemabilletera.controller.WalletController.DepositRequest;
 import com.facundo.sistemabilletera.dto.TransactionResponse;
 import java.math.BigDecimal;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/api/wallets")
@@ -23,7 +26,7 @@ public class WalletController {
     @PostMapping("/{walletId}/deposit")
     public WalletResponse deposit(
             @PathVariable Long walletId,
-            @RequestBody DepositRequest request
+            @Valid @RequestBody DepositRequest request
     ) {
         Wallet wallet = walletService.deposit(walletId, request.amount());
 
@@ -36,7 +39,7 @@ public class WalletController {
     }
 
     @PostMapping("/transfer")
-    public void transfer(@RequestBody TransferRequest request) {
+    public void transfer(@Valid @RequestBody TransferRequest request) {
         walletService.transfer(
                 request.senderWalletId(),
                 request.receiverWalletId(),
@@ -45,9 +48,9 @@ public class WalletController {
     }
 
     public record TransferRequest(
-            Long senderWalletId,
-            Long receiverWalletId,
-            BigDecimal amount
+            @NotNull Long senderWalletId,
+            @NotNull Long receiverWalletId,
+            @NotNull @Positive BigDecimal amount
     ) {
     }
 
@@ -66,6 +69,6 @@ public class WalletController {
                 .toList();
     }
 
-    public record DepositRequest(BigDecimal amount) {
+    public record DepositRequest(@NotNull @Positive BigDecimal amount) {
     }
 }
