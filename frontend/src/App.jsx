@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import TransactionList from './components/TransactionList'
-import { depositToWallet,getWalletTransactions } from './services/walletApi'
+import { depositToWallet,getWalletTransactions,transferMoney } from './services/walletApi'
 import DepositForm from './components/DepositForm'
+import TransferForm from './components/TransferForm'
 
 
 function App() {
@@ -40,11 +41,22 @@ function handleDeposit(amount) {
     })
 }
 
+function handleTransfer(receiverWalletId, amount) {
+  transferMoney(1, receiverWalletId, amount)
+    .then(() => {
+      loadTransactions()
+    })
+    .catch(() => {
+      setError('Could not transfer money.')
+    })
+}
+
   return (
     <>
       <h1>Digital Wallet System</h1>
 
         <DepositForm onDeposit={handleDeposit} />
+        <TransferForm onTransfer={handleTransfer} />
         
       <section>
         <h2>Wallet #1 transactions</h2>

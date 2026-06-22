@@ -25,3 +25,21 @@ export async function depositToWallet(walletId, amount) {
 
   return response.json()
 }
+
+export async function transferMoney(senderWalletId, receiverWalletId, amount) {
+  const response = await fetch(`${API_URL}/wallets/transfer`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      senderWalletId,
+      receiverWalletId,
+      amount,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error transferring money')
+  }
+}
