@@ -12,5 +12,35 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  backend:
+    image: eclipse-temurin:21-jdk
+    container_name: sistema-billetera-backend
+    working_dir: /app
+    restart: unless-stopped
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sistema_billetera
+      SPRING_DATASOURCE_USERNAME: billetera_user
+      SPRING_DATASOURCE_PASSWORD: billetera_password
+    depends_on:
+      - postgres
+    command: ./mvnw spring-boot:run
+
+  frontend:
+    image: node:20-alpine
+    container_name: sistema-billetera-frontend
+    working_dir: /app
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
 volumes:
   postgres_data:
