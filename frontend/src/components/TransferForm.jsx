@@ -12,28 +12,33 @@ function TransferForm({ onTransfer }) {
     }
 
     onTransfer(Number(receiverWalletId), Number(amount))
-
     setReceiverWalletId('')
     setAmount('')
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Transfer money</h2>
+    <form className="action-form" onSubmit={handleSubmit}>
+      <h2>Send money</h2>
 
-      <input
-        type="number"
-        placeholder="Receiver wallet id"
-        value={receiverWalletId}
-        onChange={(event) => setReceiverWalletId(event.target.value)}
-      />
+      <label>
+        <span>Receiver wallet</span>
+        <input
+          type="number"
+          placeholder="Enter receiver wallet id"
+          value={receiverWalletId}
+          onChange={(event) => setReceiverWalletId(event.target.value)}
+        />
+      </label>
 
-      <input
-        type="number"
-        placeholder="Amount"
-        value={amount}
-        onChange={(event) => setAmount(event.target.value)}
-      />
+      <label>
+        <span>Amount</span>
+        <input
+          type="number"
+          placeholder="Enter amount"
+          value={amount}
+          onChange={(event) => setAmount(event.target.value)}
+        />
+      </label>
 
       <button type="submit">Transfer</button>
     </form>

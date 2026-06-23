@@ -4,6 +4,7 @@ import TransactionList from './components/TransactionList'
 import { depositToWallet,getWallet,getWalletTransactions,transferMoney } from './services/walletApi'
 import DepositForm from './components/DepositForm'
 import TransferForm from './components/TransferForm'
+import WalletSummary from './components/WalletSummary'
 
 
 function App() {
@@ -57,33 +58,45 @@ function handleTransfer(receiverWalletId, amount) {
 }
 
   return (
-    <>
-      <h1>Digital Wallet System</h1>
+  <main className="dashboard">
+    <header className="topbar">
+      <div>
+        <p className="eyebrow">Digital Wallet System</p>
+        <h1>Wallet dashboard</h1>
+      </div>
 
-      {wallet && (
-        <section>
-          <h2>Available balance</h2>
-          <p>${wallet.balance}</p>
-          <p>{wallet.userEmail}</p>
+      <span className="wallet-pill">Wallet #1</span>
+    </header>
+
+    <div className="dashboard-grid">
+      <div className="sidebar">
+        <WalletSummary wallet={wallet} />
+
+        <section className="actions-card">
+          <DepositForm onDeposit={handleDeposit} />
+          <TransferForm onTransfer={handleTransfer} />
         </section>
-      )}
+      </div>
 
-      <DepositForm onDeposit={handleDeposit} />
-      <TransferForm onTransfer={handleTransfer} />
-        
-      <section>
-        <h2>Wallet #1 transactions</h2>
+      <section className="activity-card">
+        <div className="section-header">
+          <div>
+            <p className="eyebrow">Activity</p>
+            <h2>Recent transactions</h2>
+          </div>
 
-        {loading && <p>Loading...</p>}
+          {loading && <span className="muted">Loading...</span>}
+        </div>
 
-        {error && <p>{error}</p>}
+        {error && <p className="error-message">{error}</p>}
 
         {!loading && !error && (
           <TransactionList transactions={transactions} />
         )}
       </section>
-    </>
-  )
+    </div>
+  </main>
+)
 }
 
 export default App

@@ -1,15 +1,22 @@
 function TransactionList({ transactions }) {
   if (transactions.length === 0) {
-    return <p>No transactions found.</p>
+    return <p className="muted">No transactions found.</p>
   }
 
   return (
-    <div>
+    <div className="transaction-list">
       {transactions.map((transaction) => (
-        <div key={transaction.id}>
-          <strong>{transaction.type}</strong>
-          <p>{transaction.description}</p>
-          <span>${transaction.amount}</span>
+        <div className="transaction-item" key={transaction.id}>
+          <span className={`badge ${transaction.type.toLowerCase()}`}>
+            {transaction.type.replace('_', ' ')}
+          </span>
+
+          <div>
+            <strong>{transaction.description}</strong>
+            <p>{new Date(transaction.createdAt).toLocaleString()}</p>
+          </div>
+
+          <span className="amount">${transaction.amount}</span>
         </div>
       ))}
     </div>
