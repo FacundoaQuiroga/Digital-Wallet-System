@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import TransactionList from './components/TransactionList'
-import { depositToWallet,getWalletTransactions,transferMoney } from './services/walletApi'
+import { depositToWallet,getWallet,getWalletTransactions,transferMoney } from './services/walletApi'
 import DepositForm from './components/DepositForm'
 import TransferForm from './components/TransferForm'
 
@@ -10,21 +10,26 @@ function App() {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [wallet, setWallet] = useState(null)
 
   useEffect(() => {
-    loadTransactions()
+    loadWalletData()
   }, [])
 
-function loadTransactions() {
+function loadWalletData() {
   setLoading(true)
   setError('')
 
-  getWalletTransactions(1)
-    .then((data) => {
-      setTransactions(data)
+  Promise.all([
+    getWallet(1),
+    getWalletTransactions(1),
+  ])
+    .then(([walletData, transactionsData]) => {
+      setWallet(walletData)
+      setTransactions(transactionsData)
     })
     .catch(() => {
-      setError('Could not load transactions.')
+      setError('Could not load wallet data.')
     })
     .finally(() => {
       setLoading(false)
@@ -34,7 +39,7 @@ function loadTransactions() {
 function handleDeposit(amount) {
   depositToWallet(1, amount)
     .then(() => {
-      loadTransactions()
+      loadWalletData()
     })
     .catch(() => {
       setError('Could not deposit money.')
@@ -44,7 +49,7 @@ function handleDeposit(amount) {
 function handleTransfer(receiverWalletId, amount) {
   transferMoney(1, receiverWalletId, amount)
     .then(() => {
-      loadTransactions()
+      loadWalletData()
     })
     .catch(() => {
       setError('Could not transfer money.')
@@ -55,8 +60,16 @@ function handleTransfer(receiverWalletId, amount) {
     <>
       <h1>Digital Wallet System</h1>
 
-        <DepositForm onDeposit={handleDeposit} />
-        <TransferForm onTransfer={handleTransfer} />
+      {wallet && (
+        <section>
+          <h2>Available balance</h2>
+          <p>${wallet.balance}</p>
+          <p>{wallet.userEmail}</p>
+        </section>
+      )}
+
+      <DepositForm onDeposit={handleDeposit} />
+      <TransferForm onTransfer={handleTransfer} />
         
       <section>
         <h2>Wallet #1 transactions</h2>

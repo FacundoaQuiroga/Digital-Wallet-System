@@ -43,3 +43,13 @@ export async function transferMoney(senderWalletId, receiverWalletId, amount) {
     throw new Error('Error transferring money')
   }
 }
+
+export async function getWallet(walletId) {
+  const response = await fetch(`${API_URL}/wallets/${walletId}`)
+
+  if (!response.ok) {
+    throw new Error('Error loading wallet')
+  }
+
+  return response.json()
+}

@@ -69,6 +69,20 @@ public class WalletController {
                 .toList();
     }
 
+    @GetMapping("/{walletId}")
+    public WalletResponse getWallet(@PathVariable Long walletId) {
+        Wallet wallet = walletService.getWallet(walletId);
+
+        return new WalletResponse(
+                wallet.getId(),
+                wallet.getBalance(),
+                wallet.getUser().getId(),
+                wallet.getUser().getEmail()
+        );
+    }
+
     public record DepositRequest(@NotNull @Positive BigDecimal amount) {
     }
+
+
 }

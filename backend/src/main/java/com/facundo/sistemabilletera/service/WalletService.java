@@ -96,4 +96,10 @@ public class WalletService {
         return walletTransactionRepository.findByWalletOrderByCreatedAtDesc(wallet);
     }
 
+    public Wallet getWallet(Long walletId) {
+    return walletRepository.findById(walletId)
+            .orElseThrow(() -> new IllegalArgumentException("Wallet not found"));
+}
+
+
 }
