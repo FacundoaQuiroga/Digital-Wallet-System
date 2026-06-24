@@ -7,15 +7,19 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import com.facundo.sistemabilletera.dto.AuthResponse;
+import com.facundo.sistemabilletera.service.JwtService;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, JwtService jwtService) {
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/register")
@@ -35,17 +39,22 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public UserResponse login(@Valid @RequestBody LoginRequest request) {
+    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
         AppUser user = userService.login(
                 request.email(),
                 request.password()
         );
 
-        return new UserResponse(
+        UserResponse userResponse = new UserResponse(
                 user.getId(),
                 user.getFullName(),
                 user.getEmail()
         );
+
+        String token = jwtService.generateToken(user.getEmail());
+        
+        return new AuthResponse(token, userResponse);
+
     }
 
     public record RegisterRequest(
