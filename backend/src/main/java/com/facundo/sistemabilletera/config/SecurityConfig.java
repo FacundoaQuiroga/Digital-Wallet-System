@@ -18,7 +18,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                    "/api/health",
+                                "/api/health",
+                                "/api/auth/register",
+                                "/api/auth/login",
+                                "/api/auth/**",
                                 "/api/users",
                                 "/api/wallets/**",
                                 "/swagger-ui/**",
@@ -31,7 +34,7 @@ public class SecurityConfig {
     }
 
     @Bean
-public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-}
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

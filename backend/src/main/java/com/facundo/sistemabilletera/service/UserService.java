@@ -42,4 +42,15 @@ public class UserService {
 
         return savedUser;
     }
+
+    public AppUser login(String email, String password) {
+        AppUser user = appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
+
+        return user;
+    }
 }
