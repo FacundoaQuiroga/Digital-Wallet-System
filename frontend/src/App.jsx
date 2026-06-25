@@ -5,18 +5,22 @@ import { depositToMyWallet,
   getMyTransactions,
   getMyWallet,
   login,
+  register,
   transferFromMyWallet, } from './services/walletApi'
 import DepositForm from './components/DepositForm'
 import TransferForm from './components/TransferForm'
 import WalletSummary from './components/WalletSummary'
 import LoginForm from './components/LoginForm'
+import RegisterForm from './components/RegisterForm'
 
 
 function App() {
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const [wallet, setWallet] = useState(null)
+  const [authMode, setAuthMode] = useState('login')
   
   const [token, setToken] = useState(() => localStorage.getItem('token') || '')
   const [user, setUser] = useState(() => {
@@ -89,6 +93,19 @@ function handleLogin(email, password) {
     })
 }
 
+function handleRegister(fullName, email, password) {
+  register(fullName, email, password)
+    .then(() => {
+      setAuthMode('login')
+      setError('')
+      setSuccessMessage('Account created. Please login.')
+    })
+    .catch((error) => {
+      setSuccessMessage('')
+      setError(error.message)
+    })
+}
+
 function handleLogout() {
   localStorage.removeItem('token')
   localStorage.removeItem('user')
@@ -106,14 +123,37 @@ if (!token) {
       <header className="topbar">
         <div>
           <p className="eyebrow">Digital Wallet System</p>
-          <h1>Login</h1>
+          <h1>{authMode === 'login' ? 'Login' : 'Create account'}</h1>
         </div>
       </header>
 
-      {error && <p className="error-message">{error}</p>}
-
       <section className="actions-card auth-card">
-        <LoginForm onLogin={handleLogin} />
+        {authMode === 'login' ? (
+          <>
+            <LoginForm onLogin={handleLogin} />
+
+            <p className="auth-switch">
+              Don't have an account?{' '}
+              <button type="button" onClick={() => setAuthMode('register')}>
+                Create account
+              </button>
+            </p>
+          </>
+        ) : (
+          <>
+            <RegisterForm onRegister={handleRegister} />
+
+            <p className="auth-switch">
+              Already have an account?{' '}
+              <button type="button" onClick={() => setAuthMode('login')}>
+                Login
+              </button>
+            </p>
+          </>
+        )}
+
+        {error && <p className="error-message">{error}</p>}
+        {successMessage && <p className="success-message">{successMessage}</p>}
       </section>
     </main>
   )

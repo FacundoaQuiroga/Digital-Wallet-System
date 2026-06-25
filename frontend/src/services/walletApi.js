@@ -94,6 +94,28 @@ export async function login(email, password) {
   return data
 }
 
+export async function register(fullName, email, password) {
+  const response = await fetch(`${API_URL}/auth/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      fullName,
+      email,
+      password,
+    }),
+  })
+
+  const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Could not register user.')
+  }
+
+  return data
+}
+
 export async function getMyWallet(token) {
   const response = await fetch(`${API_URL}/me/wallet`, {
     headers: {
