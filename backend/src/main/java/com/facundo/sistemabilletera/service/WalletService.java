@@ -1,4 +1,5 @@
 package com.facundo.sistemabilletera.service;
+import com.facundo.sistemabilletera.model.AppUser;
 import com.facundo.sistemabilletera.model.Wallet;
 import com.facundo.sistemabilletera.model.WalletTransaction;
 import com.facundo.sistemabilletera.repository.WalletRepository;
@@ -6,6 +7,8 @@ import com.facundo.sistemabilletera.repository.WalletTransactionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import com.facundo.sistemabilletera.model.AppUser;
+
 
 import java.math.BigDecimal;
 
@@ -97,9 +100,14 @@ public class WalletService {
     }
 
     public Wallet getWallet(Long walletId) {
-    return walletRepository.findById(walletId)
-            .orElseThrow(() -> new IllegalArgumentException("Wallet not found"));
-}
+        return walletRepository.findById(walletId)
+                .orElseThrow(() -> new IllegalArgumentException("Wallet not found"));
+    }
+
+    public Wallet getWalletByUser(AppUser user) {
+        return walletRepository.findByUser(user)
+                .orElseThrow(() -> new IllegalArgumentException("Wallet not found"));
+    }
 
 
 }

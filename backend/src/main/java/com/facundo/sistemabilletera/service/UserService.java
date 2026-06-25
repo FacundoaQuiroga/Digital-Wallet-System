@@ -53,4 +53,9 @@ public class UserService {
 
         return user;
     }
+
+    public AppUser getByEmail(String email) {
+        return appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
 }
