@@ -98,4 +98,20 @@ public class WalletServiceTest {
         verify(walletRepository, never()).save(any());
         verify(walletTransactionRepository, never()).save(any());
     }
+
+    @Test
+    void depositShouldFailWhenWalletDoesNotExist() {
+        when(walletRepository.findById(99L)).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> walletService.deposit(99L, new BigDecimal("100.00"))
+        );
+
+        assertEquals("Wallet not found", exception.getMessage());
+
+        verify(walletRepository).findById(99L);
+        verify(walletRepository, never()).save(any());
+        verify(walletTransactionRepository, never()).save(any());
+    }
 }

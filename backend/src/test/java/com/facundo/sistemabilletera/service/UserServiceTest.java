@@ -15,6 +15,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import com.facundo.sistemabilletera.model.Wallet;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -71,6 +73,47 @@ public class UserServiceTest {
 
         verify(appUserRepository).findByEmail("test@example.com");
         verify(passwordEncoder).matches("wrong-password", "encoded-password");
+    }
+
+    @Test
+    void createUserShouldEncodePasswordAndCreateWallet() {
+        when(passwordEncoder.encode("123456")).thenReturn("encoded-password");
+
+        when(appUserRepository.save(any(AppUser.class))).thenAnswer(invocation -> {
+            AppUser user = invocation.getArgument(0);
+            user.setId(1L);
+            return user;
+        });
+
+        AppUser result = userService.createUser(
+                "Test User",
+                "test@example.com",
+                "123456"
+        );
+
+        assertEquals(1L, result.getId());
+        assertEquals("Test User", result.getFullName());
+        assertEquals("test@example.com", result.getEmail());
+        assertEquals("encoded-password", result.getPassword());
+
+        verify(passwordEncoder).encode("123456");
+        verify(appUserRepository).save(any(AppUser.class));
+        verify(walletRepository).save(any(Wallet.class));
+    }
+
+    @Test
+    void loginShouldFailWhenEmailDoesNotExist() {
+        when(appUserRepository.findByEmail("missing@example.com")).thenReturn(Optional.empty());
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> userService.login("missing@example.com", "123456")
+        );
+
+        assertEquals("Invalid email or password", exception.getMessage());
+
+        verify(appUserRepository).findByEmail("missing@example.com");
+        verify(passwordEncoder, never()).matches(anyString(), anyString());
     }
 
 
